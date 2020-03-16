@@ -11,11 +11,9 @@ import java.util.List;
 
 public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
     private List<Msg> msgList ;
-    private String name;
 
-    public MsgAdapter(List<Msg> msgList ) {
+    public MsgAdapter(List<Msg> msgList) {
         this.msgList = msgList;
-        //this.name = name;
     }
     /**
      * 用于找到控件的
@@ -38,9 +36,9 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
 
             right_msg = itemView.findViewById(R.id.msg_send);
 
-            //msg_name_left = itemView.findViewById(R.id.msg_name_left);
+            msg_name_left = itemView.findViewById(R.id.msg_name_left);
 
-            //msg_name_right = itemView.findViewById(R.id.msg_name_right);
+            msg_name_right = itemView.findViewById(R.id.msg_name_right);
 
         }
     }
@@ -69,12 +67,12 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
             holder.left_layout.setVisibility(View.VISIBLE);
             holder.right_layout.setVisibility(View.GONE);
             holder.left_msg.setText(msg.getContent());
-            //holder.msg_name_left.setText(name);
+            holder.msg_name_left.setText(msg.getName());
         }else {
             holder.right_layout.setVisibility(View.VISIBLE);
             holder.left_layout.setVisibility(View.GONE);
             holder.right_msg.setText(msg.getContent());
-            //holder.msg_name_right.setText(name);
+           holder.msg_name_right.setText(msg.getName());
         }
 
     }

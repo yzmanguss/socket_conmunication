@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientThread extends Thread {
 
@@ -21,6 +23,7 @@ public class ClientThread extends Thread {
     private OutputStream os;
     public static Socket socket;
     MainActivity mainActivity;
+    public static String name;
 
     public ClientThread(Context context) {
         this.mainActivity = (MainActivity) context;
@@ -45,12 +48,13 @@ public class ClientThread extends Thread {
                     try {
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         String contentInfo = null;
+                        List<String> response = new ArrayList<>();
                         while ((contentInfo = bufferedReader.readLine()) != null) {
-                            Log.d("123", contentInfo);
                             Msg msg = new Msg(contentInfo, Msg.TYPE_RECEIVE);
                             mainActivity.msgList.add(msg);
                             mainActivity.updateView();
                         }
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
