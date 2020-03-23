@@ -2,6 +2,7 @@ package serverSocket;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -12,14 +13,14 @@ public class HMThread extends Thread {
 	Socket socket = null;
 	int i = 0;
 	BufferedReader bReader;
-	String nameString;
-
-	public HMThread(Socket socket, int i, String name) {
+	DataInputStream dis;
+	public HMThread(Socket socket, int i) {
 		this.socket = socket;
 		this.i = i;
-		this.nameString = name;
+
 		try {
-			bReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
+			//bReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
+			 dis = new DataInputStream(socket.getInputStream());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,8 +37,10 @@ public class HMThread extends Thread {
 				System.out.println(contentInfo);
 				for (int i = 0; i < ServerMain.sockets.size(); i++) {
 					if (ServerMain.sockets.get(i) != this.socket) {
-						OutputStream oStream = ServerMain.sockets.get(i).getOutputStream();
-						oStream.write((nameString + "\n" + contentInfo + "\n").getBytes("utf-8"));
+						//OutputStream oStream = ServerMain.sockets.get(i).getOutputStream();
+						//oStream.write((contentInfo + "\n").getBytes("utf-8"));
+						DataOutputStream dos = new DataOutputStream(ServerMain.sockets.get(i).getOutputStream());
+						dos.writeUTF(contentInfo);
 					}
 				}
 			}
@@ -56,7 +59,8 @@ public class HMThread extends Thread {
 	 */
 	private String readFromClient() {
 		try {
-			return bReader.readLine();
+			return dis.readUTF();
+			//return bReader.readLine();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

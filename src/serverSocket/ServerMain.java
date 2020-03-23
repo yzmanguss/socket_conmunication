@@ -17,19 +17,17 @@ public class ServerMain {
 		try {
 			
 			// 1.创建服务器
-			serverSocket = new ServerSocket(20000);
-			
+			serverSocket = new ServerSocket(20010);
+			System.out.println("等待连接。。。。");
 			// 2.接收客户端的连接
 			
 			while(true){
 				Socket socket = serverSocket.accept();
 				socket.setKeepAlive(true);
-				// 3.读取数据
-				BufferedReader bReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 				sockets.add(socket);
-				String nameString = bReader.readLine();
+				
 				System.out.println("第"+ i +"位客户端连接成功");
-				new HMThread(socket, i++,nameString).start();
+				new HMThread(socket, i++).start();
 				
 			}
 
