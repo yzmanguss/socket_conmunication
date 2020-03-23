@@ -8,7 +8,13 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -24,6 +30,7 @@ public class ClientThread extends Thread {
     public static Socket socket;
     MainActivity mainActivity;
     public static String name;
+    private DataOutputStream dos;
 
     public ClientThread(Context context) {
         this.mainActivity = (MainActivity) context;
@@ -34,10 +41,11 @@ public class ClientThread extends Thread {
 
         try {
 
-            socket = new Socket("192.168.1.43", 20000);
-            socket.setKeepAlive(true);
-            os = socket.getOutputStream();
-
+            socket = new Socket("192.168.1.103", 20010);
+            //socket = new Socket("192.168.43.143", 20000);
+            //os = socket.getOutputStream();
+            dos = new DataOutputStream(socket.getOutputStream());
+            //os.write(mainActivity.clientThread.getName().getBytes("utf-8"));
 
             /**
              * 接收服务器返回信息（属于其他客户端的信息---不包括自己）
@@ -46,16 +54,23 @@ public class ClientThread extends Thread {
                 @Override
                 public void run() {
                     try {
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        //BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        DataInputStream dis = new DataInputStream(socket.getInputStream());
                         String contentInfo = null;
-                        List<String> response = new ArrayList<>();
-                        while ((contentInfo = bufferedReader.readLine()) != null) {
-                            Msg msg = new Msg(contentInfo, Msg.TYPE_RECEIVE);
+                        while ((contentInfo = dis.readUTF()) != null) {
+                            Log.d("123", contentInfo.toString());
+                            JSONTokener jsonTokener = new JSONTokener(contentInfo);
+                            JSONObject jsonObject = (JSONObject) jsonTokener.nextValue();
+                            String name = jsonObject.getString("name");
+                            String info = jsonObject.getString("info");
+                            Msg msg = new Msg(info, Msg.TYPE_RECEIVE, name);
                             mainActivity.msgList.add(msg);
                             mainActivity.updateView();
                         }
 
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
@@ -71,9 +86,13 @@ public class ClientThread extends Thread {
                     switch (msg.what) {
                         case Msg.TYPE_SEND:
                             try {
-                                os = socket.getOutputStream();
-                                os.write((msg.obj.toString() + "\n").getBytes("utf-8"));
-                            } catch (IOException e) {
+                                //os.write((mainActivity.clientThread.getName()+"\n"+ msg.obj.toString() + "\n").getBytes("utf-8"));
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("name", mainActivity.clientThread.getName());
+                                jsonObject.put("info", msg.obj.toString());
+                                String data = jsonObject.toString();
+                                dos.writeUTF(data);
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             break;

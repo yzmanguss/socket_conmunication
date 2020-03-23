@@ -12,10 +12,10 @@ public class Msg {
 
     private int type;
 
-    public Msg(String content, int type) {
+    public Msg(String content, int type,String name) {
         this.content = content;
         this.type = type;
-        //this.name = name;
+        this.name = name;
     }
 
     public String getContent() {

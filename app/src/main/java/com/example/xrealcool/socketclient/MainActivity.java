@@ -1,11 +1,14 @@
 package com.example.xrealcool.socketclient;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayoutManager layoutManager;
     private MsgAdapter msgAdapter;
     private Button send;
+    public static ClientThread clientThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +36,23 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         msgAdapter = new MsgAdapter(msgList);
         recyclerView.setAdapter(msgAdapter);
-        ClientThread clientThread = new ClientThread(this);
-        clientThread.start();
+        clientThread = new ClientThread(this);
+
+        final EditText editText = new EditText(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(editText);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String name = editText.getText().toString();
+                clientThread.setName(name);
+                Log.d("Thread name is :", clientThread.getName());
+                clientThread.start();
+            }
+        });
+        builder.setTitle("请输入你的昵称");
+        builder.setIcon(R.drawable.headimage);
+        builder.show();
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 msg.what = Msg.TYPE_SEND;
                 msg.obj = content;
                 ClientThread.handler.sendMessage(msg);
-                Msg msg1 = new Msg(content, Msg.TYPE_SEND);
+                Msg msg1 = new Msg(content, Msg.TYPE_SEND,clientThread.getName());
                 msgList.add(msg1);
                 updateView();
             }
