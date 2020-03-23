@@ -30,10 +30,7 @@ public class ServerMain {
 				String nameString = bReader.readLine();
 				System.out.println("第"+ i +"位客户端连接成功");
 				new HMThread(socket, i++,nameString).start();
-				System.out.println("第"+ i +"位客户端连接成功");
-				System.out.println("第"+ i +"位客户端连接成功");
-				System.out.println("第"+ i +"位客户端连接成功");
-				System.out.println("第"+ i +"位客户端连接成功");
+				
 			}
 
 		} catch (IOException e) {
