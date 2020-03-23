@@ -13,12 +13,12 @@ public class ServerMain {
 	public static ArrayList<Socket> sockets = new ArrayList<Socket>();
 	static int i = 1;
 	public static void main(String[] args) {
-
+		
 		try {
 			
 			// 1.创建服务器
 			serverSocket = new ServerSocket(20000);
-			System.out.println("等待客戶端的连接");
+			
 			// 2.接收客户端的连接
 			
 			while(true){
@@ -30,6 +30,10 @@ public class ServerMain {
 				String nameString = bReader.readLine();
 				System.out.println("第"+ i +"位客户端连接成功");
 				new HMThread(socket, i++,nameString).start();
+				System.out.println("第"+ i +"位客户端连接成功");
+				System.out.println("第"+ i +"位客户端连接成功");
+				System.out.println("第"+ i +"位客户端连接成功");
+				System.out.println("第"+ i +"位客户端连接成功");
 			}
 
 		} catch (IOException e) {
